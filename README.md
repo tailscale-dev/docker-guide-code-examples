@@ -3,7 +3,7 @@
 This repository supports:
 
 + [YouTube video](https://youtu.be/tqvvZhGrciQ) 
-+ [Blog post](https://tailscale.com/api/preview?slug=blog/docker-tailscale-guide)
++ [Blog post](https://tailscale.com/blog/docker-tailscale-guide)
 
 [![The Definitive Guide for using Tailscale and Docker](https://img.youtube.com/vi/tqvvZhGrciQ/maxresdefault.jpg)](https://youtu.be/tqvvZhGrciQ)
 
