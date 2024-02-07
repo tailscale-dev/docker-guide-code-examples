@@ -1,0 +1,62 @@
+// Example/default ACLs for unrestricted connections.
+{
+	// Declare static groups of users. Use autogroups for all users or users with a specific role.
+	"groups": {
+		"group:admin": ["atailandscales@gmail.com"],
+		"group:dev":   ["atailandscales@gmail.com", "amelie@tailandscales.com"],
+	},
+
+	// Define the tags which can be applied to devices and by which users.
+	"tagOwners": {
+		"tag:prod":      ["autogroup:admin"],
+		"tag:dev":       ["autogroup:admin", "group:dev"],
+		"tag:container": ["autogroup:admin"],
+	},
+
+	// Define access control lists for users, groups, autogroups, tags,
+	// Tailscale IP addresses, and subnet ranges.
+	"acls": [
+		// Allow all connections.
+		// Comment this section out if you want to define specific restrictions.
+		{"action": "accept", "src": ["*"], "dst": ["*:*"]},
+	],
+
+	// Define users and devices that can use Tailscale SSH.
+	"ssh": [
+		// Allow all users to SSH into their own devices in check mode.
+		// Comment this section out if you want to define specific restrictions.
+		{
+			"action": "accept",
+			"src":    ["autogroup:member"],
+			"dst":    ["autogroup:self"],
+			"users":  ["autogroup:nonroot", "root"],
+			//"checkPeriod": "1m", // optional, default 12h
+		},
+		// allows admin group to SSH into specified tags
+		{
+			"action": "accept",
+			"src":    ["group:dev"],
+			"dst":    ["tag:dev"],
+			"users":  ["autogroup:nonroot", "root"],
+		},
+	],
+	"nodeAttrs": [
+		{
+			// Funnel policy, which lets tailnet members control Funnel
+			// for their own devices.
+			// Learn more at https://tailscale.com/kb/1223/tailscale-funnel/
+			"target": ["autogroup:member"],
+			"attr":   ["funnel"],
+		},
+		{"target": ["100.71.14.42"], "attr": ["funnel"]},
+	],
+
+	// Test access rules every time they're saved.
+	// "tests": [
+	//  	{
+	//  		"src": "alice@example.com",
+	//  		"accept": ["tag:example"],
+	//  		"deny": ["100.101.102.103:443"],
+	//  	},
+	// ],
+}
