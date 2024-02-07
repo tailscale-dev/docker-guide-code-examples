@@ -1,0 +1,37 @@
+---
+version: "3.7"
+services:
+  ts-mealie:
+    image: tailscale/tailscale:latest
+    container_name: ts-mealie
+    hostname: mealie
+    environment:
+      - TS_AUTHKEY=tskey-client-kwLoXj6CNTRL-vCLN9Ab8QYYoLSEM98riXYLnfmtej6Lh?ephemeral=false
+      - "TS_EXTRA_ARGS=--advertise-tags=tag:container --reset"
+      - TS_SERVE_CONFIG=/config/mealie.json
+      - TS_STATE_DIR=/var/lib/tailscale
+    volumes:
+      - ${PWD}/state:/var/lib/tailscale
+      - ${PWD}/config:/config
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:v1.0.0
+    container_name: mealie
+    network_mode: service:ts-mealie
+    depends_on:
+      - ts-mealie
+    volumes:
+      - mealie-data:/app/data
+    environment:
+      - ALLOW_SIGNUP=true
+    restart: unless-stopped
+
+volumes:
+  mealie-data:
+    driver: local
+  ts-mealie:
+    driver: local

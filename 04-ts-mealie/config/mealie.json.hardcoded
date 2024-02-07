@@ -1,0 +1,19 @@
+{
+  "TCP": {
+    "443": {
+      "HTTPS": true
+    }
+  },
+  "Web": {
+    "mealie.velociraptor-noodlefish.ts.net:443": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://127.0.0.1:9000"
+        }
+      }
+    }
+  },
+  "AllowFunnel": {
+    "mealie.velociraptor-noodlefish.ts.net:443": false
+  }
+}
