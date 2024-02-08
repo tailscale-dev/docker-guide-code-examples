@@ -7,7 +7,7 @@ services:
     hostname: oauth-test
     environment:
       - TS_AUTHKEY=tskey-client-kwLoXj6CNTRL-vCLN9Ab8QYYoLSEM98riXYLnfmtej6Lh?ephemeral=true
-      - "TS_EXTRA_ARGS=--advertise-tags=tag:container --reset"
+      - TS_EXTRA_ARGS=--advertise-tags=tag:container
       - TS_STATE_DIR=/var/lib/tailscale
     volumes:
       - ${PWD}/ts-oauth-test/state:/var/lib/tailscale
