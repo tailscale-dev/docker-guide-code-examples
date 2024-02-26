@@ -8,6 +8,7 @@ services:
     environment:
       - TS_AUTHKEY=tskey-auth-kV7bYL6CNTRL-GXXhAHWhHXAVTcumJyyxXAc2cyjxQ3QkD
       - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
     volumes:
       - ${PWD}/ts-authkey-test/state:/var/lib/tailscale
       - /dev/net/tun:/dev/net/tun
