@@ -1,0 +1,66 @@
+---
+services:
+  immich-ts:
+    image: tailscale/tailscale
+    container_name: immich-ts
+    cap_add:
+      - net_admin
+      - sys_module
+    volumes:
+      - /home/alex/appdata/immich/tailscale/state:/var/lib/tailscale
+      - /home/alex/appdata/immich/serveconfig:/config
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - TS_AUTHKEY=tskey-client-kYteCh4oUr11CNTRL-B5pi3HYWquGgWT4HjsLXvGf74x3hEBW4A?ephemeral=false
+      - TS_EXTRA_ARGS=--advertise-tags=tag:container --reset
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_SERVE_CONFIG=/config/serve-config.json
+      - TS_USERSPACE=false
+    hostname: immich
+    restart: unless-stopped
+  immich-server:
+    container_name: immich_server
+    image: ghcr.io/immich-app/immich-server:release
+    command: ["start.sh", "immich"]
+    network_mode: "service:immich-ts"
+    volumes:
+      - /home/alex/appdata/immich/uploads:/usr/src/app/upload
+      - /home/alex/appdata/immich/images:/photos/images:ro #full
+      - /etc/localtime:/etc/localtime:ro
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - database
+    restart: unless-stopped
+  immich-microservices:
+    container_name: immich_microservices
+    image: ghcr.io/immich-app/immich-server:release
+    command: ["start.sh", "microservices"]
+    volumes:
+      - /home/alex/appdata/immich/uploads:/usr/src/app/upload
+      - /home/alex/appdata/immich/images:/photos/images:ro #full
+      - /etc/localtime:/etc/localtime:ro
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - database
+    restart: unless-stopped
+  redis:
+    container_name: immich_redis
+    image: redis:6.2-alpine@sha256:70a7a5b641117670beae0d80658430853896b5ef269ccf00d1827427e3263fa3
+    restart: unless-stopped
+  database:
+    container_name: immich_postgres
+    image: tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
+    env_file:
+      - .env
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_DATABASE_NAME}
+      PG_DATA: /var/lib/postgresql/data
+    volumes:
+      - /home/alex/appdata/immich/db:/var/lib/postgresql/data
+    restart: unless-stopped
