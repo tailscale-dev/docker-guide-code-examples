@@ -1,0 +1,22 @@
+services:
+  tailscale-authkey1:
+    image: tailscale/tailscale:latest
+    container_name: ts-authkey-test
+    hostname: banana
+    environment:
+      - TS_AUTHKEY=tskey-auth-kc4MhA5vzX11CNTRL-example
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+    volumes:
+      - ts-authkey-test:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
+  nginx-authkey-test:
+    image: nginx
+    network_mode: service:ts-authkey-test
+volumes:
+  ts-authkey-test:
+    driver: local

@@ -1,0 +1,39 @@
+services:
+  stirling-ts:
+    image: tailscale/tailscale:latest
+    container_name: stirling-ts
+    hostname: pdf
+    environment:
+      - TS_AUTHKEY=tskey-client-kcRHZB3GxG11CNTRL-example?ephemeral=false
+      - "TS_EXTRA_ARGS=--advertise-tags=tag:container --reset"
+      #- TS_SERVE_CONFIG=/config/stirling.json
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+    volumes:
+      - ${PWD}/config:/config
+      - stirling-ts:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
+  stirlingpdf:
+    image: frooodle/s-pdf:latest
+    container_name: stirlingpdf
+    network_mode: service:stirling-ts
+    depends_on:
+      - stirling-ts
+    volumes:
+      - stirling-config:/configs
+      - stirling-storage:/usr/share/tesseract-ocr/5/tessdata
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
+    restart: unless-stopped
+
+volumes:
+  stirling-ts:
+    driver: local
+  stirling-config:
+    driver: local
+  stirling-storage:
+    driver: local
