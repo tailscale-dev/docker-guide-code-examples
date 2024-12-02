@@ -12,6 +12,7 @@ services:
     volumes:
       - ${PWD}/config:/config
       - stirling-ts:/var/lib/tailscale
+    devices:
       - /dev/net/tun:/dev/net/tun
     cap_add:
       - net_admin
