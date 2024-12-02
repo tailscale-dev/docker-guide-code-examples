@@ -11,6 +11,7 @@ services:
       - TS_USERSPACE=false
     volumes:
       - ${PWD}/ts-authkey-test/state:/var/lib/tailscale
+    devices:
       - /dev/net/tun:/dev/net/tun
     cap_add:
       - net_admin

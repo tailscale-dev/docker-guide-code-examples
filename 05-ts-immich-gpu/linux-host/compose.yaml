@@ -9,6 +9,7 @@ services:
     volumes:
       - /home/alex/appdata/immich/tailscale/state:/var/lib/tailscale
       - /home/alex/appdata/immich/serveconfig:/config
+    devices:
       - /dev/net/tun:/dev/net/tun
     environment:
       - TS_AUTHKEY=tskey-client-kYteCh4oUr11CNTRL-B5pi3HYWquGgWT4HjsLXvGf74x3hEBW4A?ephemeral=false

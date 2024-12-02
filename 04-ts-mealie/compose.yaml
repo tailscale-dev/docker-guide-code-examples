@@ -14,6 +14,7 @@ services:
     volumes:
       - ${PWD}/state:/var/lib/tailscale
       - ${PWD}/config:/config
+    devices:
       - /dev/net/tun:/dev/net/tun
     cap_add:
       - net_admin
