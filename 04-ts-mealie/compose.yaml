@@ -18,7 +18,6 @@ services:
       - /dev/net/tun:/dev/net/tun
     cap_add:
       - net_admin
-      - sys_module
     restart: unless-stopped
   mealie:
     image: ghcr.io/mealie-recipes/mealie:v1.0.0

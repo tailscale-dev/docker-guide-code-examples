@@ -15,7 +15,6 @@ services:
       - /dev/net/tun:/dev/net/tun
     cap_add:
       - net_admin
-      - sys_module
     restart: unless-stopped
   nginx-authkey-test:
     image: nginx
