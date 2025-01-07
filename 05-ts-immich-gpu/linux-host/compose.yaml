@@ -5,7 +5,6 @@ services:
     container_name: immich-ts
     cap_add:
       - net_admin
-      - sys_module
     volumes:
       - /home/alex/appdata/immich/tailscale/state:/var/lib/tailscale
       - /home/alex/appdata/immich/serveconfig:/config
