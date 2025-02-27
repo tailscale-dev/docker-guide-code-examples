@@ -1,0 +1,39 @@
+services:
+  ts-actual-server:
+    image: tailscale/tailscale:latest
+    ports:
+      # This line makes Actual available at port 5006 of the device you run the server on,
+      # i.e. http://localhost:5006. You can change the first number to change the port, if you want.
+      - '5006:5006'
+    container_name: ts-as
+    hostname: actual-server
+    environment:
+      - TS_AUTHKEY=tskey-auth-<YOUR AUTH KEY HERE>
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+      - TS_SERVE_CONFIG=/config/serve-config.json
+    volumes:
+      - ./ts-actual-server/state:/var/lib/tailscale
+      - ./ts-actual-server/config:/config
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+    restart: unless-stopped
+  actual_server:
+    image: docker.io/actualbudget/actual-server:latest
+    network_mode: service:ts-actual-server
+    depends_on:
+      - ts-actual-server
+    volumes:
+      # Change './actual-data' below to the path to the folder you want Actual to store its data in on your server.
+      # '/data' is the path Actual will look for its files in by default, so leave that as-is.
+      - ./actual-data:/data
+    healthcheck:
+      # Enable health check for the instance
+      test: ['CMD-SHELL', 'node src/scripts/health-check.js']
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
