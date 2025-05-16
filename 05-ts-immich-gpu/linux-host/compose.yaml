@@ -2,16 +2,16 @@
 services:
   immich-ts:
     image: tailscale/tailscale
-    container_name: immich-ts
+    container_name: immich_ts
     cap_add:
       - net_admin
     volumes:
-      - /home/alex/appdata/immich/tailscale/state:/var/lib/tailscale
-      - /home/alex/appdata/immich/serveconfig:/config
+      - ${PWD}/immich_ts/state:/var/lib/tailscale
+      - ${PWD}/serve-config.json:/config/serve-config.json
     devices:
       - /dev/net/tun:/dev/net/tun
     environment:
-      - TS_AUTHKEY=tskey-client-kYteCh4oUr11CNTRL-B5pi3HYWquGgWT4HjsLXvGf74x3hEBW4A?ephemeral=false
+      - TS_AUTHKEY=tskey-client-MaD3_U-L00k
       - TS_EXTRA_ARGS=--advertise-tags=tag:container --reset
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_SERVE_CONFIG=/config/serve-config.json
@@ -24,8 +24,7 @@ services:
     command: ["start.sh", "immich"]
     network_mode: "service:immich-ts"
     volumes:
-      - /home/alex/appdata/immich/uploads:/usr/src/app/upload
-      - /home/alex/appdata/immich/images:/photos/images:ro #full
+      - ${UPLOAD_LOCATION}:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
     env_file:
       - .env
@@ -38,8 +37,7 @@ services:
     image: ghcr.io/immich-app/immich-server:release
     command: ["start.sh", "microservices"]
     volumes:
-      - /home/alex/appdata/immich/uploads:/usr/src/app/upload
-      - /home/alex/appdata/immich/images:/photos/images:ro #full
+      - ${UPLOAD_LOCATION}:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
     env_file:
       - .env
@@ -49,11 +47,11 @@ services:
     restart: unless-stopped
   redis:
     container_name: immich_redis
-    image: redis:6.2-alpine@sha256:70a7a5b641117670beae0d80658430853896b5ef269ccf00d1827427e3263fa3
+    image: docker.io/valkey/valkey:8-bookworm@sha256:42cba146593a5ea9a622002c1b7cba5da7be248650cbb64ecb9c6c33d29794b1
     restart: unless-stopped
   database:
     container_name: immich_postgres
-    image: tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
+    image: docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:739cdd626151ff1f796dc95a6591b55a714f341c737e27f045019ceabf8e8c52
     env_file:
       - .env
     environment:
@@ -62,5 +60,5 @@ services:
       POSTGRES_DB: ${DB_DATABASE_NAME}
       PG_DATA: /var/lib/postgresql/data
     volumes:
-      - /home/alex/appdata/immich/db:/var/lib/postgresql/data
+      - ${DB_DATA_LOCATION}:/var/lib/postgresql/data
     restart: unless-stopped
