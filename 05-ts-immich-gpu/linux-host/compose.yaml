@@ -14,7 +14,7 @@ services:
       - TS_AUTHKEY=tskey-client-kYteCh4oUr11CNTRL-B5pi3HYWquGgWT4HjsLXvGf74x3hEBW4A?ephemeral=false
       - TS_EXTRA_ARGS=--advertise-tags=tag:container --reset
       - TS_STATE_DIR=/var/lib/tailscale
-      - TS_SERVE_CONFIG=/config/serve-config.json
+      - TS_SERVE_CONFIG=/config/serveconfig.json
       - TS_USERSPACE=false
     hostname: immich
     restart: unless-stopped
