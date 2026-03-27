@@ -16,7 +16,7 @@ services:
     restart: unless-stopped
   nginx-authkey-test:
     image: nginx
-    network_mode: service:ts-authkey-test
+    network_mode: service:tailscale-authkey1
 volumes:
   ts-authkey-test:
     driver: local
