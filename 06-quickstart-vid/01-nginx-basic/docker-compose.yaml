@@ -15,8 +15,10 @@ services:
       - net_admin
     restart: unless-stopped
   nginx-authkey-test:
+    container_name: nginx-authkey-test
     image: nginx
     network_mode: service:tailscale-authkey1
 volumes:
   ts-authkey-test:
     driver: local
+    name: ts-authkey-test
